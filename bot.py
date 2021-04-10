@@ -18,6 +18,12 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 global babies
 babies = []
 
+bedTime = {
+
+    "start": datetime.time(12, 0, 0),
+    "end"  : datetime.time(15, 0, 0)
+}
+
 @bot.event
 async def on_ready():
     await babysitLoop.start()
@@ -26,6 +32,11 @@ async def on_ready():
 async def babysit(ctx, member: discord.Member):
     global babies
     babies.append(str(member))
+
+@bot.command()
+async def bedtime(ctx):
+    message = "Bedtime starts at " + str(bedTime["start"]) + " and ends at " + str(bedTime["end"])
+    await ctx.send(message)
 
 def time_in_range(start, end, x):
     """Return true if x is in the range [start, end]"""
@@ -49,7 +60,7 @@ async def babysitLoop():
 
                 # Find the baby that needs to go to bed
                 # TODO: start task from command and pass desired member to babysit from there
-                if (str(member) in babies) and (member.voice is not None) and (time_in_range(start, end, now)):
+                if ((str(member) in babies) and (member.voice is not None) and (time_in_range(bedTime["start"], bedTime["end"], now))):
                     
                     # Server deafen the member
                     await member.edit(mute=True)
@@ -59,7 +70,7 @@ async def babysitLoop():
                     await member.move_to(channel=None, reason=None)
                 
                 # Wake up the baby
-                elif not time_in_range(start, end, now) and (member.voice is not None):
+                elif ((str(member) in babies) and (not time_in_range(bedTime["start"], bedTime["end"], now)) and (member.voice is not None)):
                     if member.voice.mute:
                         await member.edit(mute=False)
                     if member.voice.deaf:
