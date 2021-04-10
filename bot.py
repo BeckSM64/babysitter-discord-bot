@@ -15,7 +15,6 @@ client = discord.Client()
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-global babies
 babies = []
 
 bedTime = {
@@ -30,7 +29,6 @@ async def on_ready():
 
 @bot.command()
 async def babysit(ctx, member: discord.Member):
-    global babies
     babies.append(str(member))
 
 @bot.command()
@@ -47,7 +45,6 @@ def time_in_range(start, end, x):
 
 @tasks.loop(seconds=1)
 async def babysitLoop():
-    global babies
     for guild in bot.guilds:
         if guild.id == int(GUILD):
             for member in guild.members:
