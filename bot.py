@@ -15,9 +15,9 @@ client = discord.Client()
 intents = discord.Intents().all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-babies = []
+babiesList = []
 
-bedTime = {
+bedtimeMap = {
 
     "start": datetime.time(12, 0, 0),
     "end"  : datetime.time(15, 0, 0)
@@ -29,11 +29,21 @@ async def on_ready():
 
 @bot.command()
 async def babysit(ctx, member: discord.Member):
-    babies.append(str(member))
+    babiesList.append(str(member))
 
 @bot.command()
 async def bedtime(ctx):
-    message = "Bedtime starts at " + str(bedTime["start"]) + " and ends at " + str(bedTime["end"])
+    message = "Bedtime starts at " + str(bedtimeMap["start"]) + " and ends at " + str(bedtimeMap["end"])
+    await ctx.send(message)
+
+@bot.command()
+async def babies(ctx):
+    message = "Current babies:\n"
+    if len(babiesList) == 0:
+        message += "No babies"
+    else:
+        for baby in babiesList:
+            message = message + baby + '\n'
     await ctx.send(message)
 
 def time_in_range(start, end, x):
@@ -57,7 +67,7 @@ async def babysitLoop():
 
                 # Find the baby that needs to go to bed
                 # TODO: start task from command and pass desired member to babysit from there
-                if ((str(member) in babies) and (member.voice is not None) and (time_in_range(bedTime["start"], bedTime["end"], now))):
+                if ((str(member) in babiesList) and (member.voice is not None) and (time_in_range(bedtimeMap["start"], bedtimeMap["end"], now))):
                     
                     # Server deafen the member
                     await member.edit(mute=True)
@@ -67,7 +77,7 @@ async def babysitLoop():
                     await member.move_to(channel=None, reason=None)
                 
                 # Wake up the baby
-                elif ((str(member) in babies) and (not time_in_range(bedTime["start"], bedTime["end"], now)) and (member.voice is not None)):
+                elif ((str(member) in babiesList) and (not time_in_range(bedtimeMap["start"], bedtimeMap["end"], now)) and (member.voice is not None)):
                     if member.voice.mute:
                         await member.edit(mute=False)
                     if member.voice.deaf:
