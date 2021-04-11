@@ -29,6 +29,7 @@ async def on_ready():
     await babysitLoop.start()
 
 @bot.command()
+@commands.has_role('Babysitter')
 async def babysit(ctx, member: discord.Member):
     babiesList.append(str(member))
 
