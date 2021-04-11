@@ -88,7 +88,6 @@ async def babysitLoop():
                 now = datetime.datetime.now().time()
 
                 # Find the baby that needs to go to bed
-                # TODO: start task from command and pass desired member to babysit from there
                 if ((str(member) in babiesList) and (member.voice is not None) and (time_in_range(bedtimeMap["start"], bedtimeMap["end"], now))):
                     
                     # Server deafen the member
