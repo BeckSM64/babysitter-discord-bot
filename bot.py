@@ -2,6 +2,7 @@
 import os
 import discord
 import datetime
+import re
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext import tasks
@@ -19,8 +20,8 @@ babiesList = []
 
 bedtimeMap = {
 
-    "start": datetime.time(12, 0, 0),
-    "end"  : datetime.time(15, 0, 0)
+    "start": datetime.time(1, 0, 0),
+    "end"  : datetime.time(12, 0, 0)
 }
 
 @bot.event
@@ -32,7 +33,27 @@ async def babysit(ctx, member: discord.Member):
     babiesList.append(str(member))
 
 @bot.command()
-async def bedtime(ctx):
+async def bedtime(ctx, start=None, end=None):
+
+    # Check if start and end time were provided
+    if start is not None and end is not None:
+
+        # Regex to determine if bedtime was provided in correct format
+        regex = re.search('^(2[0-3]|1[0-9]|[0-9]|[^0-9][0-9]):([0-5][0-9]|[0-9])$', start)
+        if regex is not None:
+            start += ":00" # Needed for strptime() function
+            regex = re.search('^(2[0-3]|1[0-9]|[0-9]|[^0-9][0-9]):([0-5][0-9]|[0-9])$', end)
+
+        if regex is not None:
+            end += ":00"
+
+            # Check the format of the start and end time
+            startTime = datetime.datetime.strptime(start,"%H:%M:%S").time()
+            endTime = datetime.datetime.strptime(end,"%H:%M:%S").time()
+            bedtimeMap["start"] = startTime
+            bedtimeMap["end"]   = endTime
+
+    # Send message with bedtime (doesn't update if format was provided incorrectly)
     message = "Bedtime starts at " + str(bedtimeMap["start"]) + " and ends at " + str(bedtimeMap["end"])
     await ctx.send(message)
 
