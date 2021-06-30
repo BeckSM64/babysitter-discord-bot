@@ -1,4 +1,4 @@
-# bot.py
+#!/usr/bin/env python3
 import os
 import discord
 import datetime
