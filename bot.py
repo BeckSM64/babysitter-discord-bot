@@ -3,12 +3,14 @@ import os
 import discord
 import datetime
 import re
+from os.path import join, dirname
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext import tasks
 from discord import Member
 
-load_dotenv()
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 TOKEN = os.getenv('DISCORD_TOKEN')
 GUILD = os.getenv('DISCORD_GUILD')
 
