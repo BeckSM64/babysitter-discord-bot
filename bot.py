@@ -36,6 +36,11 @@ async def babysit(ctx, member: discord.Member):
     babiesList.append(str(member))
 
 @bot.command()
+@commands.has_role('Babysitter')
+async def daddyshome(ctx, member: discord.Member):
+    babiesList.remove(str(member))
+
+@bot.command()
 async def bedtime(ctx, start=None, end=None):
 
     # Check if start and end time were provided
